@@ -1,0 +1,41 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId       String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  password     String
+  createdOn    DateTime   @default(now())
+  updateOn     DateTime   @updatedAt
+  refreshToken String?
+  role         Role       @default(User)
+  Products     Products[]
+}
+
+model Products {
+  productId     String   @id @default(uuid())
+  p_name        String
+  selling_price Int
+  size          String[]
+  color         String[]
+  cost_price    Int
+  createdOn     DateTime @default(now())
+  updateOn      DateTime @updatedAt
+  quantity      Int
+  p_userId      String
+  User          User     @relation(fields: [p_userId], references: [userId], onDelete: Cascade)
+}
+
+enum Role {
+  User
+  Admin
+  Manager
+}
